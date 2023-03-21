@@ -4,5 +4,12 @@ FastAPI / MongoDB / REST server
 
 ### launching server:
 
-- python3 main.py
-- uvicorn main:app --reload
+```terminal
+python3 main.py
+```
+
+or
+
+```terminal
+uvicorn main:app --reload
+```
