@@ -1,46 +1,41 @@
-# from fastapi import APIRouter
-# from models.plant_model import Plant
-# from schema.plant_responses import all_plants_response
+from fastapi import APIRouter, Body, Depends, HTTPException, status, Response, Query
+from models.plant_model import PlantMongoDB, PlantIn
+from models.user_model import UserBase
+from controllers.plants_controllers import add_plant
+from utils.current_user import get_current_active_user
 
-# from bson import ObjectId
-# from config.db import mongo_db
+from utils.cloudinary_upload import uploadImage
 
-# plant = APIRouter()
-# collection = mongo_db["plants"]
-
-
-# @plant.post("/plants")
-# async def create_plant(plant: Plant):
-#     new_plant = collection.insert_one(dict(plant))
-#     found_plant = all_plants_response(
-#         collection.find({"_id": new_plant.inserted_id}))
-#     return {"status": "OK", "data": found_plant}
+plant_router = APIRouter()
 
 
-# @plant.get("/plants")
-# async def find_all_plants():
-#     users = all_plants_response(collection.find())
-#     return {"status": "OK", "data": users}
+@plant_router.get("/my-plants")
+async def read_users_me(current_user: UserBase = Depends(get_current_active_user)):
+    plant_list = current_user.plants
+    return plant_list
 
 
-# @plant.get("/plants/{id}")
-# async def get_one_user(id: str):
-#     plant = all_plants_response(collection.find({"_id": ObjectId(id)}))
-#     return {"status": "Ok", "data": plant}
+@plant_router.post("/add/")
+async def add_one_image(
+    path: str = Query(..., description="Path to local file"),
+    current_user: UserBase = Depends(get_current_active_user),
+):
+    # Upload to Cloudinary
+    file_info = uploadImage(path)
 
-# # to do, make fields optional so that if field not changed it doesnt change to default
+    # Create new plant and pass values from the Cloudinary upload:
+    new_plant = PlantMongoDB(images=[{**file_info}])
+
+    # insert the new plant to mongodb
+    await new_plant.insert()
+
+    # add new plant
+    user_plant_list = await current_user.set({UserBase.plants: [new_plant]})
+
+    return user_plant_list
 
 
-# @plant.put("/plants/{id}")
-# async def update_plant(id: str, plant: Plant):
-#     collection.find_one_and_update(
-#         {"_id": ObjectId(id)}, {"$set": dict(plant)})
-#     plant = all_plants_response(collection.find({"_id": ObjectId(id)}))
-#     return {"status": "Ok", "data": plant}
-
-
-# @plant.delete("/plants/{id}")
-# async def delete_plant(id: str):
-#     collection.find_one_and_delete({"_id": ObjectId(id)})
-#     plants = find_all_plants(collection.find())
-#     return {"status": "Ok", "data": []}
+@plant_router.get("/")
+async def get_all_plants():
+    plants = await PlantMongoDB.find().to_list()
+    return plants

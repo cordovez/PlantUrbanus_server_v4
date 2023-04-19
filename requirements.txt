@@ -4,3 +4,7 @@ python-dotenv
 uvicorn
 motor
 beanie
+passlib[bcrypt]
+python-multipart
+python-jose[cryptography]
+cloudinary

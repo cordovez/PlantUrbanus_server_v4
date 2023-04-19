@@ -5,68 +5,52 @@ User Models
 from datetime import datetime
 from typing import Optional
 
+# from passlib.hash import bcrypt
+
 from beanie import Document, Indexed
 from pydantic import BaseModel, EmailStr
+from passlib.hash import bcrypt
+
+from models.plant_model import PlantMongoDB
 
 
-# Model hierarchy from parents to children
-
-class UserAuth(BaseModel):
-    """User registration and login authorisation"""
-
-    email: EmailStr
-    password: str
-
-
-class UserUpdate(BaseModel):
-    """Updatable user fields"""
-
-    email: Optional[EmailStr] = None
-
-    # User information
-    first_name: Optional[str] = None
-    last_name: Optional[str] = None
-
-
-class UserOut(UserUpdate):
-    """User fields returned to client"""
-
-    email: Indexed(EmailStr, unique=True)
-    disabled: bool = False
-
-
-class User(Document, UserOut):
+class UserBase(Document):
     """User database representation"""
 
-    password: str
-    email_confirmed_at: Optional[datetime] = None
-
-    def __repr__(self) -> str:
-        return f"<User {self.email}"
-
-    def __str__(self) -> str:
-        return self.email
-
-    # why do we need the hash number?
-    def __hash__(self) -> int:
-        return hash(self.email)
-
-    # verify that object passed email is same as this User email
-    def __eq__(self, other: object) -> bool:
-        if isinstance(other, User):
-            return self.email == other.email
-        return False
-
-    # an internal way to implement setters and getters
-    @property
-    def created(self) -> datetime:
-        """Datetime user was created from ID"""
-        return self.id.generation_time
-
-    @classmethod
-    async def by_email(cls, email: str) -> "User":
-        """Get a user by email"""
-        return await cls.find_one(cls.email == email)
+    first_name: Optional[str]
+    last_name: Optional[str]
+    plants: list[PlantMongoDB] = []
+    avatar: Optional[str]
+    created_at: Optional[datetime] = datetime.now()
+    disabled: bool = False
+    email: Optional[EmailStr] | None = None
+    username: Optional[str] | None = None
+    password_hash: Optional[str] | None = None
 
     class Settings:
         name = "Users"
+
+
+class UserIn(BaseModel):
+    email: EmailStr
+    username: str
+    password: str
+
+
+class UserOut(BaseModel):
+    first_name: Optional[str]
+    last_name: Optional[str]
+    plants: list
+    avatar: Optional[str]
+    email: Indexed(EmailStr, unique=True)
+    username: Indexed(str, unique=True)
+
+
+class UserUpdate(BaseModel):
+    """User database representation"""
+
+    first_name: Optional[str] | None = None
+    last_name: Optional[str] | None = None
+    avatar: Optional[str] | None = None
+    email: Optional[EmailStr] | None = None
+    username: Optional[str] | None = None
