@@ -90,7 +90,7 @@ async def add_plant_to_user(path_to_image, user):
     file_info = uploadImage(path_to_image)
 
     # Create new plant with the Plant model and pass values from the Cloudinary upload:
-    new_plant = PlantMongoDB(images=[{**file_info}])
+    new_plant = PlantMongoDB(images=[{**file_info}], owner=user.username)
 
     # insert the new plant to mongodb
     await new_plant.insert()

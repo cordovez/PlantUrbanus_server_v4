@@ -17,10 +17,9 @@ class PlantIn(BaseModel):
 class PlantMongoDB(Document):
     common_name: Optional[str] | None = None
     scientific_name: Optional[str] | None = None
-    images: list[PlantIn] = []
-    # public_id: str
-    # uri: str
-    created_at: Optional[datetime] | None = None
+    images: list[dict] = []
+    owner: Optional[str] | None = None
+    created_at: Optional[datetime] = datetime.now()
 
     class Settings:
         name = "Plants"

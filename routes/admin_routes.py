@@ -23,7 +23,13 @@ admin_router = APIRouter()
 
 # Create
 @admin_router.post("/create", response_model=UserBase)
-async def add_user_to_db(user: UserIn):
+async def add_user_to_db(
+    user: UserIn, current_user: UserBase = Depends(get_current_active_user)
+):
+    """Admin level create user"""
+    if current_user.username != "cordovez":
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
+
     new_user = await create_user(user)
     return new_user
 
@@ -33,8 +39,13 @@ async def add_user_to_db(user: UserIn):
     response_description="A single document from database",
     response_model=UserBase,
 )
-async def get_user_by_id(id: str):
+async def get_user_by_id(
+    id: str, current_user: UserBase = Depends(get_current_active_user)
+):
     """Finds a sinlge user by id"""
+    if current_user.username != "cordovez":
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
+
     user_data = await get_user(id)
     if not user_data:
         return {"message": f"User with id: {id} was not found"}
@@ -48,8 +59,10 @@ async def get_user_by_id(id: str):
     response_description="Lists all users",
     response_model=list[UserBase],
 )
-async def get_all_users():
+async def get_all_users(current_user: UserBase = Depends(get_current_active_user)):
     """An unfiltered list of all the users in the database"""
+    if current_user.username != "cordovez":
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
     users = await get_users()
     return users
 
@@ -62,7 +75,14 @@ async def get_all_users():
     response_description="User was updated",
     # response_model=dict,
 )
-async def update_user(id: str, user_update_data: UserUpdate):
+async def update_user(
+    id: str,
+    user_update_data: UserUpdate,
+    current_user: UserBase = Depends(get_current_active_user),
+):
+    if current_user.username != "cordovez":
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
+
     response = await update_user_data(id, user_update_data)
     if response:
         return {"message": "user updated successfully"}
@@ -78,8 +98,13 @@ async def update_user(id: str, user_update_data: UserUpdate):
     response_description="Delete a single document from database",
     response_model=dict,
 )
-async def delete_user(id: str):
+async def delete_user(
+    id: str, current_user: UserBase = Depends(get_current_active_user)
+):
     """Finds a sinlge user by id"""
+    if current_user.username != "cordovez":
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
+
     delete = await delete_user_by_id(id)
 
     if not delete:
