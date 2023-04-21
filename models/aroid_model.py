@@ -1,5 +1,4 @@
 from beanie import Document
-from datetime import datetime
 from pydantic import Field, BaseModel
 from typing import Optional
 # from bson import ObjectId

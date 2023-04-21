@@ -1,11 +1,7 @@
-# from pydantic import BaseModel, Field, root_validator
-# from datetime import datetime
-# from typing import Any, List, Optional
-# from bson impo
 
 from beanie import Document
 from datetime import datetime
-from pydantic import Field, BaseModel
+from pydantic import BaseModel
 from typing import Optional
 
 
@@ -38,7 +34,7 @@ class PlantMongoDB(Document):
         }
 
 
-# class PlantOut(BaseModel):
-#     common_name: Optional[str] | None = None
-#     scientific_name: Optional[str] | None = None
-#     images: Optional[list] = []
+class PlantOut(BaseModel):
+    common_name: Optional[str] | None = None
+    scientific_name: Optional[str] | None = None
+    images: Optional[list] = []

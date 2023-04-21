@@ -1,7 +1,5 @@
-from fastapi import APIRouter, HTTPException, status, Query
+from fastapi import APIRouter, status
 from models.aroid_model import AroidMongoDB, AroidOut
-from typing import List, Annotated
-from beanie import PydanticObjectId
 
 from controllers.aroids_controllers import (get_aroids, get_aroid_by_id,
                                             get_aroid_by_taxon)

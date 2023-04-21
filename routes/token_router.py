@@ -1,6 +1,6 @@
-from fastapi import APIRouter, Body, Depends, HTTPException, status, Response
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
-from datetime import datetime, timedelta
+from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi.security import OAuth2PasswordRequestForm
+from datetime import timedelta
 
 from utils.authenticate_user import authenticate_user
 from utils.create_access_token import create_access_token

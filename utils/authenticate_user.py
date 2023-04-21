@@ -5,7 +5,7 @@ from utils.verify_password import verify_password
 async def get_user_by_username(username):
     user_data = await UserBase.find_one(UserBase.username == username)
     if not user_data:
-        return false
+        return False
     return user_data
 
 

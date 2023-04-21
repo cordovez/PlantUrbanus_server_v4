@@ -2,21 +2,18 @@
 User registration router
 """
 
-from fastapi import APIRouter, Body, Depends, HTTPException, status, Response, Query
-from pydantic import EmailStr
+from fastapi import APIRouter, Depends, HTTPException, status
 
-from models.user_model import UserIn, UserOut, UserBase, UserUpdate
+from models.user_model import UserBase, UserUpdate
 from models.plant_model import PlantMongoDB
 from utils.current_user import get_current_active_user
 
 
 from controllers.user_controllers import (
-    create_user,
     get_user,
     get_users,
     update_user_data,
     delete_user_by_id,
-    add_plant_to_user,
 )
 
 admin_router = APIRouter()
@@ -33,7 +30,7 @@ admin_router = APIRouter()
 async def get_user_by_id(
     id: str, current_user: UserBase = Depends(get_current_active_user)
 ):
-    """Finds a sinlge user by id"""
+    """Finds a single user by id"""
     if current_user.username != "cordovez":
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
 

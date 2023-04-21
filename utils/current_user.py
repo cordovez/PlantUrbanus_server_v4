@@ -2,7 +2,7 @@
 Current user dependency
 """
 from fastapi import Depends, HTTPException, status
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 
 from models.token_model import TokenData

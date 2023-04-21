@@ -2,19 +2,14 @@
 User registration router
 """
 
-from fastapi import APIRouter, Body, Depends, HTTPException, status, Response, Query
-from pydantic import EmailStr
+from fastapi import APIRouter, Depends, Query
 
-from models.user_model import UserIn, UserOut, UserBase, UserUpdate
+from models.user_model import UserIn, UserBase
 from utils.current_user import get_current_active_user
 
 
 from controllers.user_controllers import (
     create_user,
-    get_user,
-    get_users,
-    update_user_data,
-    delete_user_by_id,
     add_plant_to_user,
 )
 

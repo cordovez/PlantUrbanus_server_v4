@@ -1,12 +1,9 @@
 from fastapi.encoders import jsonable_encoder
-from fastapi import APIRouter, Body, Depends, HTTPException, status, Response
-from pydantic import EmailStr
-from beanie import Link, WriteRules
+from fastapi import HTTPException, status
 
 
-import logging
 
-from models.user_model import UserIn, UserOut, UserBase
+from models.user_model import UserIn, UserBase
 from models.plant_model import PlantMongoDB
 from utils.password_hasher import get_password_hash
 from utils.cloudinary_upload import uploadImage
@@ -73,7 +70,7 @@ async def update_user_data(id: str, user_update_data):
     updated_item = found_user.copy(update=update_data, exclude={"id"})
     updated_to_json = jsonable_encoder(updated_item)
 
-    update_mongo_doc = await found_user.set({**updated_to_json})
+    await found_user.set({**updated_to_json})
 
     return True
 

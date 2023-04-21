@@ -1,4 +1,5 @@
 from models.aroid_model import AroidMongoDB
+from fastapi import status, HTTPException
 
 
 async def get_aroids(limit, skip):

@@ -6,7 +6,7 @@ from datetime import datetime
 from typing import Optional
 
 
-from beanie import Document, Indexed, Link
+from beanie import Document, Link
 from pydantic import BaseModel, EmailStr
 from passlib.hash import bcrypt
 
@@ -18,7 +18,9 @@ class UserBase(Document):
 
     first_name: Optional[str]
     last_name: Optional[str]
-    # plants: list[PlantMongoDB] = [] # dont know why this returns a ValidationError: 1 validation error for UserBase plants -> 0 value is not a valid dict (type=type_error.dict)
+    # plants: list[PlantMongoDB] = [] # dont know why this returns a 
+    # ValidationError: 1 validation error for UserBase plants -> 0 value is not 
+    # a valid dict (type=type_error.dict)
     plants: list[Link[PlantMongoDB]] = []
     avatar: Optional[str]
     created_at: Optional[datetime] = datetime.now()
