@@ -5,9 +5,8 @@ User Models
 from datetime import datetime
 from typing import Optional
 
-# from passlib.hash import bcrypt
 
-from beanie import Document, Indexed
+from beanie import Document, Indexed, Link
 from pydantic import BaseModel, EmailStr
 from passlib.hash import bcrypt
 
@@ -19,7 +18,8 @@ class UserBase(Document):
 
     first_name: Optional[str]
     last_name: Optional[str]
-    plants: list[PlantMongoDB] = []
+    # plants: list[PlantMongoDB] = [] # dont know why this returns a ValidationError: 1 validation error for UserBase plants -> 0 value is not a valid dict (type=type_error.dict)
+    plants: list[Link[PlantMongoDB]] = []
     avatar: Optional[str]
     created_at: Optional[datetime] = datetime.now()
     disabled: bool = False
@@ -40,10 +40,10 @@ class UserIn(BaseModel):
 class UserOut(BaseModel):
     first_name: Optional[str]
     last_name: Optional[str]
-    plants: list
+    plants: Optional[list]
     avatar: Optional[str]
-    email: Indexed(EmailStr, unique=True)
-    username: Indexed(str, unique=True)
+    email: EmailStr
+    username: str
 
 
 class UserUpdate(BaseModel):

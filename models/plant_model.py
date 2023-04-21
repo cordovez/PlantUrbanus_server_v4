@@ -17,7 +17,7 @@ class PlantIn(BaseModel):
 class PlantMongoDB(Document):
     common_name: Optional[str] | None = None
     scientific_name: Optional[str] | None = None
-    images: list[dict] = []
+    images: Optional[list] = []
     owner: Optional[str] | None = None
     created_at: Optional[datetime] = datetime.now()
 
@@ -36,3 +36,9 @@ class PlantMongoDB(Document):
             ],
             "date_created": datetime.now(),
         }
+
+
+# class PlantOut(BaseModel):
+#     common_name: Optional[str] | None = None
+#     scientific_name: Optional[str] | None = None
+#     images: Optional[list] = []

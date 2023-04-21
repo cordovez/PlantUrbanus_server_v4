@@ -1,6 +1,8 @@
 from fastapi.encoders import jsonable_encoder
 from fastapi import APIRouter, Body, Depends, HTTPException, status, Response
 from pydantic import EmailStr
+from beanie import Link, WriteRules
+
 
 import logging
 
@@ -86,6 +88,9 @@ async def delete_user_by_id(id: str):
 
 
 async def add_plant_to_user(path_to_image, user):
+    """
+    you may need to change the type of new_plant.id to a Link[PlantMongoDB] object, which is a valid reference to a PlantMongoDB object in the UserBase model. You can do this by using the Link function from the bson module to create a new Link object from the new_plant instance
+    """
     # Upload to Cloudinary
     file_info = uploadImage(path_to_image)
 
@@ -93,9 +98,11 @@ async def add_plant_to_user(path_to_image, user):
     new_plant = PlantMongoDB(images=[{**file_info}], owner=user.username)
 
     # insert the new plant to mongodb
-    await new_plant.insert()
+    await new_plant.create()
 
     # add new plant to the current user
-    user_plant_list = await user.set({UserBase.plants: [new_plant]})
+    user.plants.append(new_plant)
+
+    await user.save()
 
     return user.plants

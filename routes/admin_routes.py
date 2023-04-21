@@ -6,6 +6,7 @@ from fastapi import APIRouter, Body, Depends, HTTPException, status, Response, Q
 from pydantic import EmailStr
 
 from models.user_model import UserIn, UserOut, UserBase, UserUpdate
+from models.plant_model import PlantMongoDB
 from utils.current_user import get_current_active_user
 
 
@@ -22,20 +23,10 @@ admin_router = APIRouter()
 
 
 # Create
-@admin_router.post("/create", response_model=UserBase)
-async def add_user_to_db(
-    user: UserIn, current_user: UserBase = Depends(get_current_active_user)
-):
-    """Admin level create user"""
-    if current_user.username != "cordovez":
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
-
-    new_user = await create_user(user)
-    return new_user
-
-
+# Read
+# User by Id
 @admin_router.get(
-    "/{id}",
+    "/user/{id}",
     response_description="A single document from database",
     response_model=UserBase,
 )
@@ -52,8 +43,9 @@ async def get_user_by_id(
     return user_data
 
 
+# All users
 @admin_router.get(
-    "/",
+    "/users",
     status_code=status.HTTP_202_ACCEPTED,
     summary="List all users",
     response_description="Lists all users",
@@ -67,9 +59,16 @@ async def get_all_users(current_user: UserBase = Depends(get_current_active_user
     return users
 
 
+# All Plants
+@admin_router.get("/plants")
+async def get_all_plants():
+    plants = await PlantMongoDB.find().to_list()
+    return plants
+
+
 # Update
 @admin_router.patch(
-    "/{id}",
+    "/user/{id}",
     status_code=status.HTTP_202_ACCEPTED,
     summary="Update a single user",
     response_description="User was updated",

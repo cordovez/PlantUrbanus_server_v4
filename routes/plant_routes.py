@@ -16,7 +16,7 @@ async def add_one_image(
     current_user: UserBase = Depends(get_current_active_user),
 ):
     new_image = await add_plant_image(plant_id, path, current_user)
-    return new_image
+    return current_user.plants
 
 
 @plant_router.get("/")
