@@ -17,9 +17,3 @@ async def add_one_image(
 ):
     new_image = await add_plant_image(plant_id, path, current_user)
     return current_user.plants
-
-
-@plant_router.get("/")
-async def get_all_plants():
-    plants = await PlantMongoDB.find().to_list()
-    return plants
