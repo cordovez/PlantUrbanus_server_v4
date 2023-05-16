@@ -1,9 +1,10 @@
 from fastapi import FastAPI
-from models.tags_models import Tag
-from config.db import init_db
+from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 
-from routes.aroid_router import aroid_router
+from models.tags_models import Tag
+from config.db import init_db
+
 from routes.user_routes import user_router
 from routes.token_router import token_router
 from routes.plant_routes import plant_router
@@ -11,6 +12,18 @@ from routes.admin_routes import admin_router
 
 
 app = FastAPI()
+
+origins = [
+    "http://localhost:3000",
+    "http://localhost:8000",
+]
+
+app.add_middleware(CORSMiddleware, 
+                   allow_origins= origins, 
+                   allow_credentials = True, 
+                   allow_methods=["*"], 
+                   allow_headers=["*"], )
+
 
 
 @app.get("/", tags=["root"])

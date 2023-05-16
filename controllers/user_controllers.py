@@ -63,14 +63,13 @@ async def get_users():
     return all_users
 
 
-async def update_user_data(id: str, user_update_data):
-    found_user = await UserBase.get(id)
+async def update_user_data( user, user_update_data):
     update_data = user_update_data.dict(exclude_unset=True)
 
-    updated_item = found_user.copy(update=update_data, exclude={"id"})
+    updated_item = user.copy(update=update_data, exclude={"id"})
     updated_to_json = jsonable_encoder(updated_item)
 
-    await found_user.set({**updated_to_json})
+    await user.set({**updated_to_json})
 
     return True
 
@@ -84,12 +83,14 @@ async def delete_user_by_id(id: str):
     return True
 
 
-async def add_plant_to_user(path_to_image, user):
+async def add_plant_to_user(public_id, url, user):
     """
-    you may need to change the type of new_plant.id to a Link[PlantMongoDB] object, which is a valid reference to a PlantMongoDB object in the UserBase model. You can do this by using the Link function from the bson module to create a new Link object from the new_plant instance
+    you may need to change the type of new_plant.id to a Link[PlantMongoDB] 
+    object, which is a valid reference to a PlantMongoDB object in the UserBase 
+    model. You can do this by using the Link function from the bson module to
+    create a new Link object from the new_plant instance
     """
-    # Upload to Cloudinary
-    file_info = uploadImage(path_to_image)
+    file_info = {"public_id": public_id, "uri":url,}
 
     # Create new plant with the Plant model and pass values from the Cloudinary upload:
     new_plant = PlantMongoDB(images=[{**file_info}], owner=user.username)
@@ -101,5 +102,15 @@ async def add_plant_to_user(path_to_image, user):
     user.plants.append(new_plant)
 
     await user.save()
-
     return user.plants
+
+async def add_avatar_image(path_to_image, user):
+    
+    # Upload to Cloudinary
+    file_info = uploadImage(path_to_image)
+
+    user.avatar = {**file_info}
+
+    await user.save()
+
+    return True

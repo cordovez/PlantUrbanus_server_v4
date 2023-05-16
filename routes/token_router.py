@@ -1,3 +1,4 @@
+
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 from datetime import timedelta
@@ -6,7 +7,7 @@ from utils.authenticate_user import authenticate_user
 from utils.create_access_token import create_access_token
 from models.token_model import Token
 
-ACCESS_TOKEN_EXPIRE_MINUTES = 30
+ACCESS_TOKEN_EXPIRE_MINUTES = 1440
 
 token_router = APIRouter()
 

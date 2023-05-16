@@ -27,15 +27,14 @@ config = cloudinary.config(secure=True)
 #     "\n",
 # )
 
-
-def uploadImage(path_to_image: str) -> dict:
+def uploadImage(file) :
     # Upload the image and get its URL
     # ==============================
 
     # Upload the image.
     # Set the asset's public ID and allow overwriting the asset with new versions
     plant_image = cloudinary.uploader.upload(
-        path_to_image,
+        file,
         # unique_filename=False,
         overwrite=True,
         folder="PlantUrbanus",

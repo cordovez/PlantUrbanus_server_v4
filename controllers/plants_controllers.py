@@ -1,5 +1,6 @@
 
 from models.plant_model import PlantMongoDB
+from fastapi.encoders import jsonable_encoder
 
 from utils.cloudinary_upload import uploadImage
 
@@ -25,5 +26,29 @@ async def add_plant_image(plant_id, path, user):
     file_info = uploadImage(path)
     plant.images.append(file_info)
     await plant.save()
+
+    return True
+
+async def get_plant_by_id(plant_id, user):
+    plant = await PlantMongoDB.get(plant_id)
+    return plant
+    
+
+async def update_plant_data(plant_id, plant_update_data):
+    update_data = plant_update_data.dict(exclude_unset=True)
+    plant = await PlantMongoDB.get(plant_id)
+    
+    updated_plant = plant.copy(update=update_data, exclude={"id"})
+    updated_to_json = jsonable_encoder(updated_plant)
+    await plant.set({**updated_to_json})
+    
+    return True
+
+
+async def delete_plant_by_id(id: str):
+    found_plant = await PlantMongoDB.get(id)
+    deleted = await found_plant.delete()
+    if not deleted:
+        return False
 
     return True

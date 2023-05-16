@@ -14,6 +14,13 @@ class PlantMongoDB(Document):
     common_name: Optional[str] | None = None
     scientific_name: Optional[str] | None = None
     images: Optional[list] = []
+    pest_treatment: Optional[str] | None = None
+    substrate: Optional[str] | None = None
+    nutrients: Optional[str] | None = None
+    notes: Optional[str] | None = None
+    date_of_purchase: Optional[str] | None = None
+    purchased_at: Optional[str] | None = None
+    price_paid: Optional[float] | None = None
     owner: Optional[str] | None = None
     created_at: Optional[datetime] = datetime.now()
 
@@ -38,3 +45,22 @@ class PlantOut(BaseModel):
     common_name: Optional[str] | None = None
     scientific_name: Optional[str] | None = None
     images: Optional[list] = []
+    pest_treatment: Optional[str] | None = None
+    substrate: Optional[str] | None = None
+    nutrients: Optional[str] | None = None
+    notes: Optional[str] | None = None
+    date_of_purchase: Optional[str] | None = None
+    purchased_at: Optional[str] | None = None
+    price_paid: Optional[float] | None = None
+    created_at: datetime
+
+class PlantUpdate(BaseModel):
+    common_name: Optional[str] | None = None
+    scientific_name: Optional[str] | None = None
+    pest_treatment: Optional[str] | None = None
+    substrate: Optional[str] | None = None
+    nutrients: Optional[str] | None = None
+    notes: Optional[str] | None = None
+    date_of_purchase: Optional[str] | None = None
+    purchased_at: Optional[str] | None = None
+    price_paid: Optional[float] | None = None
