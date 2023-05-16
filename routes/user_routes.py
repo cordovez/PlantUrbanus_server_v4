@@ -2,10 +2,9 @@
 User registration router
 """
 
-from fastapi import APIRouter, Depends, Query, HTTPException, status
+from fastapi import APIRouter, Depends, Query, status
 
 from models.user_model import UserIn, UserBase, UserOut, UserUpdate
-from models.plant_model import PlantMongoDB
 from utils.current_user import get_current_active_user
 from controllers.user_controllers import update_user_data, add_avatar_image
 
