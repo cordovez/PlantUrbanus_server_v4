@@ -1,7 +1,7 @@
 
 from beanie import Document
 from datetime import datetime
-from pydantic import BaseModel
+from pydantic import BaseModel, Extra
 from typing import Optional
 
 
@@ -28,6 +28,7 @@ class PlantMongoDB(Document):
         name = "Plants"
 
     class Config:
+        extra = Extra.allow
         schema_extra = {
             "common_name": "Monstera Swiss Cheese",
             "scientific_name": "Monstera deliciosa",

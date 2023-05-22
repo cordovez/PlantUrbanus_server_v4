@@ -6,10 +6,13 @@ from datetime import datetime
 from typing import Optional
 
 from beanie import Document, Link
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, Extra
 
 from models.plant_model import PlantMongoDB
 
+class ImageBase(BaseModel):
+    public_id: str
+    uri: str
 
 class UserBase(Document):
     """User database representation"""
@@ -19,7 +22,7 @@ class UserBase(Document):
     # ValidationError: 1 validation error for UserBase plants -> 0 value is not 
     # a valid dict (type=type_error.dict)
     plants: list[Link[PlantMongoDB]] = []
-    avatar: Optional[dict]
+    avatar: dict 
     created_at: Optional[datetime] = datetime.now()
     disabled: bool = False
     email: Optional[EmailStr] | None = None
@@ -28,21 +31,27 @@ class UserBase(Document):
 
     class Settings:
         name = "Users"
+        
+    class Config:
+        extra = Extra.allow
 
-
+    
+    
 class UserIn(BaseModel):
     email: EmailStr
     username: str
     password: str
+    avatar: Optional[ImageBase]
 
 
 class UserOut(BaseModel):
     first_name: Optional[str]
     last_name: Optional[str]
     plants: Optional[list]
-    avatar: Optional[dict]
+    avatar: dict
     email: EmailStr
     username: str
+    created_at: datetime
 
 
 class UserUpdate(BaseModel):

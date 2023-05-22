@@ -9,16 +9,16 @@ from utils.password_hasher import get_password_hash
 from utils.cloudinary_upload import uploadImage
 
 
-async def create_user(user: UserIn):
+async def create_user( user: UserIn):
     """Creates a new user:
     Verifies that neither email nor username already exist in db
-    Passes those params and password to a function add_params()
+    Passes those params and password hash to a function add_params()
     Saves the returned object from add_params() to the db
     """
 
     user_email = await UserBase.find_one({"email": user.email})
     user_username = await UserBase.find_one({"username": user.username})
-
+   
     if user_email is not None:
         raise HTTPException(
             status.HTTP_409_CONFLICT, detail="user with that email already exists"
@@ -28,7 +28,7 @@ async def create_user(user: UserIn):
             status.HTTP_409_CONFLICT, detail="user with that username already exists"
         )
 
-    register_user = add_params(user)
+    register_user = add_params( user)
 
     saved_user = await UserBase.create(register_user)
     return saved_user
@@ -38,16 +38,23 @@ def add_params(user_in: UserIn):
     """Adds the parameters passed to a user model:
     Makes hash of the plain-text password
     Turns the pydantic user_in into a dict(), without the password
-    adds email, username and a newly-created password_hash to a UserBase model
+    adds email, username and a newly-created password_hash to a UserBase model. 
+    Creates a default avatar.
     returns the model
     """
     hashed_password = get_password_hash(user_in.password)
     user_dict = user_in.dict(exclude={"password"})
+    
+    user_name = user_dict["username"]
+    uri = f"https://api.multiavatar.com/{user_name}.png"
+    avatar_dict = {"public_id": None, "uri": uri}
     user = UserBase(
         email=user_dict["email"],
         username=user_dict["username"],
         password_hash=hashed_password,
+        avatar=avatar_dict
     )
+    print(user)
     return user
 
 
@@ -104,12 +111,20 @@ async def add_plant_to_user(public_id, url, user):
     await user.save()
     return user.plants
 
-async def add_avatar_image(path_to_image, user):
-    
+async def add_avatar_image(user):
     # Upload to Cloudinary
-    file_info = uploadImage(path_to_image)
+    # file_info = uploadImage(path_to_image)
+    user = await UserBase.get(user.id)
+    
+    await user.save()
 
-    user.avatar = {**file_info}
+    return True
+
+async def add_generic_avatar(user):
+    """Function to automatically add a generic avatar on new user create"""
+
+    user = await UserBase.get(user._id)
+    user.avatar = "https://api.multiavatar.com/"+user.username+".png"
 
     await user.save()
 

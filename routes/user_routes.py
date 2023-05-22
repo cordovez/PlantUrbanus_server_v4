@@ -6,7 +6,7 @@ from fastapi import APIRouter, Depends, Query, status
 
 from models.user_model import UserIn, UserBase, UserOut, UserUpdate
 from utils.current_user import get_current_active_user
-from controllers.user_controllers import update_user_data, add_avatar_image
+from controllers.user_controllers import update_user_data, add_generic_avatar
 
 
 from controllers.user_controllers import (
@@ -19,8 +19,9 @@ user_router = APIRouter()
 
 # Create
 @user_router.post("/create")
-async def add_user_to_db(user: UserIn):
+async def add_user_to_db( user: UserIn):
     new_user = await create_user(user)
+    
     return new_user
 
 @user_router.post("/me/add-plant")
@@ -40,9 +41,8 @@ async def create_avatar(
     path: str = Query(..., description="Path to local file"),
     current_user: UserBase = Depends(get_current_active_user),
 ):
-    avatar = await add_avatar_image(path, current_user)
 
-    return avatar
+    pass
 
 # Read
 @user_router.get("/me", response_model=UserOut)
