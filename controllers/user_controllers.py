@@ -72,11 +72,13 @@ async def get_users():
 
 async def update_user_data( user, user_update_data):
     update_data = user_update_data.dict(exclude_unset=True)
+    found_user = await UserBase.get(user.id)
 
-    updated_item = user.copy(update=update_data, exclude={"id"})
-    updated_to_json = jsonable_encoder(updated_item)
+    updated_user = found_user.copy(update=update_data, exclude={"id"})
+    # updated_item = user.copy(update=update_data, exclude={"id"})
+    updated_to_json = jsonable_encoder(updated_user)
 
-    await user.set({**updated_to_json})
+    await found_user.set({**updated_to_json})
 
     return True
 

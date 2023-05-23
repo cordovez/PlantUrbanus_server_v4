@@ -18,9 +18,6 @@ class UserBase(Document):
     """User database representation"""
     first_name: Optional[str]
     last_name: Optional[str]
-    # plants: list[PlantMongoDB] = [] # dont know why this returns a 
-    # ValidationError: 1 validation error for UserBase plants -> 0 value is not 
-    # a valid dict (type=type_error.dict)
     plants: list[Link[PlantMongoDB]] = []
     avatar: dict 
     created_at: Optional[datetime] = datetime.now()

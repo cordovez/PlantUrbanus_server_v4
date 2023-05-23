@@ -45,7 +45,7 @@ async def create_avatar(
     pass
 
 # Read
-@user_router.get("/me", response_model=UserOut)
+@user_router.get("/me", response_model=UserOut ) 
 async def read_user_me(current_user: UserBase = Depends(get_current_active_user)):
     user_data = current_user.dict()
     return user_data
